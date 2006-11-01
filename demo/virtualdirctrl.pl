@@ -1,6 +1,7 @@
+#!/usr/local/bin/perl
 use strict;
 #!/usr/bin/perl
-# $Id: virtualdirctrl.pl,v 1.1 2005/08/30 13:49:10 simonf Exp $
+# $Id: virtualdirctrl.pl,v 1.2 2006/04/07 09:13:28 johnl Exp $
 
 package TestApp;
 use strict;

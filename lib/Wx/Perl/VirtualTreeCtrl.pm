@@ -2,9 +2,9 @@
 ## Name:        Wx::Perl::VirtualTreeCtrl
 ## Purpose:     TreeCtrl that populates it's children on demand
 ## Author:      Simon Flack
-## Modified by: $Author: simonf $ on $Date: 2005/04/06 17:38:20 $
+## Modified by: $Author: andreww $ on $Date: 2006/10/05 14:22:34 $
 ## Created:     08/10/2002
-## RCS-ID:      $Id: VirtualTreeCtrl.pm,v 1.15 2005/04/06 17:38:20 simonf Exp $
+## RCS-ID:      $Id: VirtualTreeCtrl.pm,v 1.17 2006/10/05 14:22:34 andreww Exp $
 #############################################################################
 
 package Wx::Perl::VirtualTreeCtrl;
@@ -18,7 +18,7 @@ use vars qw($VERSION @EXPORT_OK @ISA $AUTOLOAD);
 
 @ISA = qw(Wx::EvtHandler Exporter);
 @EXPORT_OK = 'EVT_POPULATE_TREE_ITEM';
-$VERSION = sprintf'%d.%03d', q$Revision: 1.15 $ =~ /: (\d+)\.(\d+)/;
+$VERSION = sprintf'%d.%03d', q$Revision: 1.17 $ =~ /: (\d+)\.(\d+)/;
 
 use constant POPULATE_TREE_ITEM_EVENT => Wx::NewEventType;
 
@@ -53,13 +53,11 @@ sub EVT_POPULATE_TREE_ITEM ($$$) {
 sub AUTOLOAD {
     my $self = shift;
     my ($method) = $AUTOLOAD =~ /.*:(.*)/;
-
-    my $class = ref $self->{_tree_ctrl};
-    my $func = $self->{_tree_ctrl}->can($method);
-    croak "Undefined method '$method' in class '$class'" unless $func;
-
-    unshift @_, $self->{_tree_ctrl};
-    goto &$func;
+    my $tctl = $self->{_tree_ctrl};
+    my $class = ref $tctl;
+    croak "Undefined method '$method' in class '$class'"
+        unless $tctl->can($method);
+    return $tctl->$method(@_);
 }
 
 sub AddRoot {
@@ -163,7 +161,7 @@ tree control.
 
 =head1 SYNOPSIS
 
-    use Wx::Perl::VirtualTreeCtrl 'EVT_TREE_ITEM_EXPANDING';
+    use Wx::Perl::VirtualTreeCtrl 'EVT_POPULATE_TREE_ITEM';
 
     my $tree = new Wx::Perl::VirtualTreeCtrl($tree_ctrl);
     EVT_POPULATE_TREE_ITEM($self, $tree, \&AddChildren);
